@@ -1,0 +1,31 @@
+{
+  "name" : "liz/weixin-bundle",
+  "description" : "A symfony weixin bundle",
+  "type" : "symfony-bundle",
+  "authors" : [{
+    "name" : "liz",
+    "email" : "demo@company.com"
+  }],
+  "keywords" : [
+    "demo bundle"
+  ],
+  "license" : [
+    "MIT"
+  ],
+  "require" : {
+    "php": ">=7.0",
+    "symfony/framework-bundle": ">=3.0",
+    "fabpot/goutte": ">=2.0",
+    "doctrine/cache": ">=1.5"
+  },
+  "autoload": {
+      "psr-4": {
+        "Liz\\AliBundle\\": ""
+      }
+  },
+  "extra" : {
+    "branch-alias" : {
+      "dev-master" : "some_version-dev"
+    }
+  }
+}
