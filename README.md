@@ -21,3 +21,4 @@ liz_wei_xin:
     $this->get('liz_wx.service.base')
             ->updateAccessToken();
 ````
+获取微信服务器ip完成

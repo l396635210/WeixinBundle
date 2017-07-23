@@ -11,11 +11,14 @@ namespace Liz\WeiXinBundle\Services;
 
 use Doctrine\Common\Cache\FilesystemCache;
 use GuzzleHttp\Client;
+use Liz\WeiXinBundle\Traits\ApiUrl;
+use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Validator\Exception\ValidatorException;
 
 class BaseService
 {
+    use ApiUrl;
     /**
      * @var string
      */
@@ -67,11 +70,23 @@ class BaseService
     }
 
     /**
+     * @return string
+     */
+    protected function getCacheDir()
+    {
+        return $this->cacheDir;
+    }
+
+    /**
      * @return null|\Symfony\Component\HttpFoundation\Request
      */
     protected function getRequest()
     {
         return $this->request;
+    }
+
+    public function cacheAccessTokenKey(){
+        return md5("{$this->getAppID()}_{$this->getAppSecret()}");
     }
 
     public function __construct($token, $appID, $appSecret, $cacheDir, RequestStack $requestStack)
@@ -80,7 +95,8 @@ class BaseService
         $this->request = $requestStack->getCurrentRequest();
         $this->appID = $appID;
         $this->appSecret = $appSecret;
-        $this->cache = new FilesystemCache($cacheDir."/liz_wx");
+        $this->cacheDir = $cacheDir."/liz_wx";
+        $this->cache = new FilesystemCache($this->getCacheDir());
     }
 
     public function start(){
@@ -96,16 +112,41 @@ class BaseService
         throw $this->baseException("token valid fail, check config liz_wx: base: token value");
     }
 
+    public function getAccessToken(){
+        return $this->getCache()->fetch($this->cacheAccessTokenKey());
+    }
+
+    protected function requestAPICallBack(ResponseInterface $res, callable $callback){
+        $body = \GuzzleHttp\json_decode($res->getBody()->getContents(),true);
+        if(!isset($body["errcode"])){
+            return call_user_func($callback, $body);
+        }
+        throw $this->baseException($body["errmsg"]);
+    }
+
     public function updateAccessToken(){
         $client = new Client();
         $res = $client->request("get",
-            "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={$this->getAppID()}&secret={$this->getAppSecret()}"
+            $this->getApiUrl(self::$accessTokenForService)
+        );
+        $this->requestAPICallBack($res, function ($body){
+            $this->getCache()->save(
+                $this->cacheAccessTokenKey(), $body['access_token'],
+                $body["expires_in"] - 200
+            );
+        });
+    }
+
+    public function fetchWeiXinServerIP(){
+        $client = new Client();
+        $res = $client->request("get",
+            $this->getApiUrl(self::$weiXinServerIPForService)
         );
         $body = \GuzzleHttp\json_decode($res->getBody()->getContents(),true);
-        $this->cache->save(
-            md5("{$this->getAppID()}_{$this->getAppSecret()}"), $body['access_token'],
-            $body["expires_in"] - 200
-        );
+        if(!isset($body["errcode"])){
+            return $body["ip_list"];
+        }
+        throw $this->baseException($body["errmsg"]);
     }
 
     public function baseException($e){
