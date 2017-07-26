@@ -16,7 +16,7 @@ liz_wei_xin:
 ````                
 获取access_token已完成：       
 此操作会将access_token以file_system缓存存在%kernel.cache_dir%."/liz_wx"文件夹下，    
-保存时间7000秒，可以根据$cache->fetch(md5("{AppID}_{AppSecret}"))取到该值
+保存时间7000秒，返回获取token
 ````php
     $this->get('liz_wx.service.base')
             ->updateAccessToken();

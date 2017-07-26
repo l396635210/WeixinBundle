@@ -9,16 +9,15 @@
 namespace Liz\WeiXinBundle\Services;
 
 
-use Doctrine\Common\Cache\FilesystemCache;
 use GuzzleHttp\Client;
 use Liz\WeiXinBundle\Traits\ApiUrl;
-use Psr\Http\Message\ResponseInterface;
+use Liz\WeiXinBundle\Traits\Interaction;
+use Liz\WeiXinBundle\Utils\Tool;
 use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Validator\Exception\ValidatorException;
 
 class BaseService
 {
-    use ApiUrl;
+    use Interaction;
     /**
      * @var string
      */
@@ -28,14 +27,6 @@ class BaseService
 
     private $appSecret;
 
-    private $cache;
-
-    private $cacheDir;
-
-    /**
-     * @var null|\Symfony\Component\HttpFoundation\Request
-     */
-    private $request;
 
     /**
      * @return mixed
@@ -53,52 +44,22 @@ class BaseService
         return $this->appSecret;
     }
 
-    /**
-     * @return string
-     */
-    protected function getToken()
-    {
-        return $this->token;
-    }
 
-    /**
-     * @return FilesystemCache
-     */
-    protected function getCache()
-    {
-        return $this->cache;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getCacheDir()
-    {
-        return $this->cacheDir;
-    }
-
-    /**
-     * @return null|\Symfony\Component\HttpFoundation\Request
-     */
-    protected function getRequest()
-    {
-        return $this->request;
-    }
-
-    public function cacheAccessTokenKey(){
-        return md5("{$this->getAppID()}_{$this->getAppSecret()}");
-    }
-
-    public function __construct($token, $appID, $appSecret, $cacheDir, RequestStack $requestStack)
+    public function __construct($token, $appID, $appSecret, $cacheDir,
+                                RequestStack $requestStack, Tool $tool)
     {
         $this->token = $token;
         $this->request = $requestStack->getCurrentRequest();
         $this->appID = $appID;
         $this->appSecret = $appSecret;
-        $this->cacheDir = $cacheDir."/liz_wx";
-        $this->cache = new FilesystemCache($this->getCacheDir());
+        $this->tool = $tool;
+        $this->httpClient = new Client();
     }
 
+    /**
+     * 接口配置
+     * @return mixed| "success" or throw
+     */
     public function start(){
         $request = $this->getRequest();
         $timestamp = $request->query->get('timestamp');
@@ -109,47 +70,31 @@ class BaseService
         if($sign==$request->query->get('signature')){
             return  $request->query->get('echostr');
         }
-        throw $this->baseException("token valid fail, check config liz_wx: base: token value");
+        throw $this->exception("token valid fail, check config liz_wx: base: token value");
     }
 
-    public function getAccessToken(){
-        return $this->getCache()->fetch($this->cacheAccessTokenKey());
-    }
 
-    protected function requestAPICallBack(ResponseInterface $res, callable $callback){
-        $body = \GuzzleHttp\json_decode($res->getBody()->getContents(),true);
-        if(!isset($body["errcode"])){
-            return call_user_func($callback, $body);
-        }
-        throw $this->baseException($body["errmsg"]);
-    }
 
     public function updateAccessToken(){
-        $client = new Client();
-        $res = $client->request("get",
-            $this->getApiUrl(self::$accessTokenForService)
+        $res = $this->httpClient->request("get",
+            $this->getFetchAccessTokenAPI()
         );
-        $this->requestAPICallBack($res, function ($body){
-            $this->getCache()->save(
-                $this->cacheAccessTokenKey(), $body['access_token'],
-                $body["expires_in"] - 200
-            );
+        return $this->requestAPICallBack($res, function ($body){
+            $this->getTool()->saveAccessToken($body);
+            return $body;
         });
     }
 
+    /**
+     * @return mixed
+     */
     public function fetchWeiXinServerIP(){
-        $client = new Client();
-        $res = $client->request("get",
-            $this->getApiUrl(self::$weiXinServerIPForService)
+        $res = $this->httpClient->request("get",
+            $this->getWeiXinServerIpAPI()
         );
-        $body = \GuzzleHttp\json_decode($res->getBody()->getContents(),true);
-        if(!isset($body["errcode"])){
+        return $this->requestAPICallBack($res, function ($body){
             return $body["ip_list"];
-        }
-        throw $this->baseException($body["errmsg"]);
+        });
     }
 
-    public function baseException($e){
-        return new ValidatorException($e);
-    }
 }

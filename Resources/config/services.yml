@@ -2,6 +2,18 @@ services:
 #    liz_wei_xin.example:
 #        class: Liz\WeiXinBundle\Example
 #        arguments: ["@service_id", "plain_value", "%parameter%"]
+    liz_wx.utils.tool:
+        class: Liz\WeiXinBundle\Utils\Tool
+        arguments: ['@translator', %kernel.environment%, %kernel.cache_dir%, "token", "app_id", "app_secret"]
+
     liz_wx.service.base:
         class: Liz\WeiXinBundle\Services\BaseService
-        arguments: ["token", "app_id", "app_secret", %kernel.cache_dir%, '@request_stack']
+        arguments: ["token", "app_id", "app_secret", %kernel.cache_dir%, '@request_stack', '@liz_wx.utils.tool']
+
+    liz_wx.service.menu:
+        class: Liz\WeiXinBundle\Services\MenuService
+        arguments: ['@liz_wx.service.base', '@liz_wx.utils.tool']
+
+    liz_wx.service.event:
+        class: Liz\WeiXinBundle\Services\EventService
+        arguments: ['@liz_wx.service.base', '@liz_wx.utils.tool', '@request_stack']

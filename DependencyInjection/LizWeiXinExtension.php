@@ -30,5 +30,10 @@ class LizWeiXinExtension extends Extension
             ->replaceArgument(1, $config['base']['app_id'])
             ->replaceArgument(2, $config['base']['app_secret'])
         ;
+        $def = $container->getDefinition('liz_wx.utils.tool');
+        $def->replaceArgument(3, $config['base']['token'])
+            ->replaceArgument(4, $config['base']['app_id'])
+            ->replaceArgument(5, $config['base']['app_secret'])
+        ;
     }
 }
