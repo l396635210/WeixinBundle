@@ -8,26 +8,32 @@
 
 namespace Liz\WeiXinBundle\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+
 abstract class MenuButton
 {
 
     /**
      * @var MenuButton
+     * @ORM\ManyToOne(targetEntity="Liz\WeiXinBundle\Entity\MediaButton", inversedBy="subButtons")
      */
     protected $parentButton;
 
     /**
      * @var \Doctrine\Common\Collections\ArrayCollection|MenuButton
+     * @ORM\OneToMany(targetEntity="Liz\WeiXinBundle\Entity\MediaButton", mappedBy="parentButton")
      */
     protected $subButtons;
 
     /**
      * @var string
+     * @ORM\Column(name="name", type="string", length=30, options={"fixed":true,"comments":"按钮名称"})
      */
     protected $name;
 
     /**
      * @var string
+     * @ORM\Column(name="type", type="string", length=30, options={"fixed":true, "comments":""})
      */
     protected $type;
 

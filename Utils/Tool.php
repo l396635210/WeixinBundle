@@ -10,6 +10,7 @@ namespace Liz\WeiXinBundle\Utils;
 
 
 use Doctrine\Common\Cache\FilesystemCache;
+use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class Tool
@@ -22,11 +23,8 @@ class Tool
     /**
      * @var string
      */
-    private $env;
+    private $kernel;
 
-    private $token;
-
-    private $appID;
 
     private $appSecret;
 
@@ -44,11 +42,11 @@ class Tool
     }
 
     /**
-     * @return string
+     * @return string|KernelInterface
      */
-    public function getEnv()
+    public function getKernel()
     {
-        return $this->env;
+        return $this->kernel;
     }
 
     /**
@@ -62,33 +60,16 @@ class Tool
     /**
      * @return mixed
      */
-    public function getToken()
-    {
-        return $this->token;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getAppID()
-    {
-        return $this->appID;
-    }
-
-    /**
-     * @return mixed
-     */
     public function getAppSecret()
     {
         return $this->appSecret;
     }
 
-    public function __construct(TranslatorInterface $translator, $env, $cacheDir,
-                                $token, $appID, $appSecret)
+    public function __construct(TranslatorInterface $translator, KernelInterface $kernel)
     {
         $this->translator = $translator;
-        $this->env = $env;
-        $this->cache = new FilesystemCache($cacheDir."/liz_wx");
+        $this->kernel = $kernel;
+        $this->cache = new FilesystemCache($kernel->getCacheDir()."/liz_wx");
     }
 
     public function trans($message, array $params = array())
@@ -97,27 +78,8 @@ class Tool
     }
 
 
-    protected function cacheAccessTokenKey(){
-        return md5("{$this->getAppID()}_{$this->getAppSecret()}");
-    }
-
-    public function saveAccessToken($body){
-        $this->getCache()->save(
-            $this->cacheAccessTokenKey(), $body['access_token'],
-            $body["expires_in"] - 200
-        );
-    }
-
-    /**
-     * 获取当前token
-     * @return false|mixed
-     */
-    public function getAccessToken(){
-        return $this->getCache()->fetch($this->cacheAccessTokenKey());
-    }
-
     public function dump($var){
-        if($this->env!='prod'){
+        if($this->getKernel()->getEnvironment()!='prod'){
             dump($var);
         }
     }

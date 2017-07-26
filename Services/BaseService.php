@@ -10,10 +10,11 @@ namespace Liz\WeiXinBundle\Services;
 
 
 use GuzzleHttp\Client;
-use Liz\WeiXinBundle\Traits\ApiUrl;
 use Liz\WeiXinBundle\Traits\Interaction;
 use Liz\WeiXinBundle\Utils\Tool;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class BaseService
 {
@@ -23,8 +24,14 @@ class BaseService
      */
     private $token;
 
+    /**
+     * @var
+     */
     private $appID;
 
+    /**
+     * @var
+     */
     private $appSecret;
 
 
@@ -44,16 +51,21 @@ class BaseService
         return $this->appSecret;
     }
 
-
-    public function __construct($token, $appID, $appSecret, $cacheDir,
-                                RequestStack $requestStack, Tool $tool)
+    public function __construct($token, $appID, $appSecret, KernelInterface $kernel,
+                                RequestStack $requestStack, TranslatorInterface $translator)
     {
         $this->token = $token;
         $this->request = $requestStack->getCurrentRequest();
         $this->appID = $appID;
         $this->appSecret = $appSecret;
-        $this->tool = $tool;
+        $this->tool = new Tool($translator, $kernel);
         $this->httpClient = new Client();
+        $this->base = $this;
+    }
+
+
+    protected function getFetchAccessTokenAPI(){
+        return self::$baseWeiXinApi."token?grant_type=client_credential&appid={$this->getAppID()}&secret={$this->getAppSecret()}";
     }
 
     /**
@@ -70,19 +82,38 @@ class BaseService
         if($sign==$request->query->get('signature')){
             return  $request->query->get('echostr');
         }
-        throw $this->exception("token valid fail, check config liz_wx: base: token value");
+        throw $this->interActionException("token valid fail, check config liz_wx: base: token value");
     }
-
-
 
     public function updateAccessToken(){
         $res = $this->httpClient->request("get",
             $this->getFetchAccessTokenAPI()
         );
         return $this->requestAPICallBack($res, function ($body){
-            $this->getTool()->saveAccessToken($body);
+            $this->saveAccessToken($body);
             return $body;
         });
+    }
+
+
+    protected function cacheAccessTokenKey(){
+        return md5("{$this->getAppID()}_{$this->getAppSecret()}");
+    }
+
+    public function saveAccessToken($body){
+        $this->getTool()->getCache()->save(
+            $this->cacheAccessTokenKey(), $body['access_token'],
+            $body["expires_in"] - 200
+        );
+        return $body;
+    }
+
+    /**
+     * 获取当前token
+     * @return false|mixed
+     */
+    public function getAccessToken(){
+        return $this->getTool()->getCache()->fetch($this->cacheAccessTokenKey());
     }
 
     /**

@@ -15,6 +15,13 @@ class ClickButton extends MenuButton
 {
     protected $key;
 
+    const TYPE_CLICK = "click";
+    const TYPE_SCANCODE_PUSH = "scancode_push";
+    const TYPE_PIC_SYSPHOTO = "pic_sysphoto";
+    const TYPE_PIC_PHOTO_OR_ALBUM = "pic_photo_or_album";
+    const TYPE_PIC_WEIXIN = "pic_weixin";
+    const TYPE_LOCATION_SELECT = "location_select";
+
     private static $clickTypes = [
         "click"=>"click",
         "scancode_push"=>"scancode_push",

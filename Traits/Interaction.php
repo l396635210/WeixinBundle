@@ -9,6 +9,7 @@
 namespace Liz\WeiXinBundle\Traits;
 
 use GuzzleHttp\Client;
+use Liz\WeiXinBundle\Services\BaseService;
 use Liz\WeiXinBundle\Utils\Tool;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Validator\Exception\ValidatorException;
@@ -41,6 +42,19 @@ trait Interaction
 
 
     /**
+     * @var BaseService
+     */
+    private $base;
+
+    /**
+     * @return BaseService
+     */
+    protected function getBase()
+    {
+        return $this->base;
+    }
+
+    /**
      * @return null|\Symfony\Component\HttpFoundation\Request
      */
     protected function getRequest()
@@ -59,30 +73,26 @@ trait Interaction
     /**
      * @return Tool
      */
-    public function getTool()
+    protected function getTool()
     {
         return $this->tool;
     }
 
 
-    protected function getFetchAccessTokenAPI(){
-        return self::$baseWeiXinApi."token?grant_type=client_credential&appid={$this->getAppID()}&secret={$this->getAppSecret()}";
-    }
-
     protected function getWeiXinServerIpAPI(){
-        return self::$baseWeiXinApi."getcallbackip?access_token={$this->getTool()->getAccessToken()}";
+        return self::$baseWeiXinApi."getcallbackip?access_token={$this->getBase()->getAccessToken()}";
     }
 
     protected function getMenuCreateAPI(){
-        return self::$baseWeiXinApi."menu/create?access_token={$this->getTool()->getAccessToken()}";
+        return self::$baseWeiXinApi."menu/create?access_token={$this->getBase()->getAccessToken()}";
     }
 
     protected function getMenuGetAPI(){
-        return self::$baseWeiXinApi."menu/get?access_token={$this->getTool()->getAccessToken()}";
+        return self::$baseWeiXinApi."menu/get?access_token={$this->getBase()->getAccessToken()}";
     }
 
     protected function getMenuDeleteAPI(){
-        return self::$baseWeiXinApi."menu/delete?access_token={$this->getTool()->getAccessToken()}";
+        return self::$baseWeiXinApi."menu/delete?access_token={$this->getBase()->getAccessToken()}";
     }
 
     protected function requestAPICallBack(ResponseInterface $res, callable $callback){
@@ -90,10 +100,10 @@ trait Interaction
         if(!isset($body["errcode"]) || $body["errcode"]==0){
             return call_user_func($callback, $body);
         }
-        throw $this->exception($body["errmsg"]);
+        throw $this->interActionException($body["errmsg"]);
     }
 
-    public function exception($e){
+    protected function interActionException($e){
         return new ValidatorException($this->getTool()->trans($e));
     }
 }
