@@ -11,6 +11,6 @@ services:
         class: Liz\WeiXinBundle\Services\MenuService
         arguments: ['@liz_wx.service.base', '@kernel' , '@request_stack', '@translator']
 
-    liz_wx.service.event:
-        class: Liz\WeiXinBundle\Services\EventService
-        arguments: ['@liz_wx.service.base', '@kernel' , '@request_stack', '@translator']
+    liz_wx.service.message:
+        class: Liz\WeiXinBundle\Services\MessageService
+        arguments: ['@liz_wx.service.base', '@kernel' , '@request_stack', '@translator', '@twig']

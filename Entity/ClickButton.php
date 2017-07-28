@@ -80,7 +80,7 @@ class ClickButton extends MenuButton
         return $this;
     }
 
-    public function toArray()
+    protected function toArray()
     {
         $menu = parent::toArray();
         $menu["key"] = $this->getKey();

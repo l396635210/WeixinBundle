@@ -8,64 +8,40 @@
 
 namespace Liz\WeiXinBundle\Entity;
 
-
-class CommonMsg
+class CommonMsg extends ReceiveMsg
 {
-
     private static $typeText = "text";
-    private static $typeImage = "image";
-    private static $typeVoice = "voice";
-    private static $typeVideo = "video";
-    private static $typeShortVideo = "shortvideo";
-    private static $typeLocation = "location";
-    private static $typeLink      = "link";
-
-    private $data;
-
-    private $type;
-
-    /**
-     * @return array
-     */
-    public function getData()
-    {
-        return $this->data;
-    }
-
-    /**
-     * @param array $data
-     */
-    public function setData($data)
-    {
-        $this->data = $data;
-        return $this;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param mixed $type
-     */
-    protected function setType($type)
-    {
-        $this->type = $type;
-        return $this;
-    }
-
-    public function __construct(array $data)
-    {
-        $this->data = $data;
-        $this->setType($data["MsgType"]);
-    }
-
     public function isText(){
         return strtolower($this->getType()) == self::$typeText;
+    }
+
+    private static $typeImage = "image";
+    public function isImage(){
+        return strtolower($this->getType()) == self::$typeImage;
+    }
+    private static $typeVoice = "voice";
+    public function isVoice(){
+        return strtolower($this->getType()) == self::$typeVoice;
+    }
+
+    private static $typeVideo = "video";
+    public function isVideo(){
+        return strtolower($this->getType()) == self::$typeVideo;
+    }
+
+    private static $typeShortVideo = "shortvideo";
+    public function isShortVideo(){
+        return strtolower($this->getType()) == self::$typeShortVideo;
+    }
+
+    private static $typeLocation = "location";
+    public function isLocation(){
+        return strtolower($this->getType()) == self::$typeLocation;
+    }
+
+    private static $typeLink      = "link";
+    public function isLink(){
+        return strtolower($this->getType()) == self::$typeLink;
     }
 
 }

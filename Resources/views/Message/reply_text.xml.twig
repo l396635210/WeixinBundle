@@ -1,0 +1,6 @@
+{% extends '@LizWeiXin/reply_msg_layout.xml.twig' %}
+{% block data %}
+    {% for key,val in replyMessage.data %}
+    <{{ key }}><![CDATA[{{ val }}]]></{{ key }}>
+    {% endfor %}
+{% endblock %}

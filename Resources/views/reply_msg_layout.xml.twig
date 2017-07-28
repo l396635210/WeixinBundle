@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<xml>
+    <CreateTime>{{ replyMessage.createTime }}</CreateTime>
+    <ToUserName><![CDATA[{{ replyMessage.toUserName }}]]></ToUserName>
+    <FromUserName><![CDATA[{{ replyMessage.fromUserName }}]]></FromUserName>
+    <MsgType><![CDATA[{{ replyMessage.msgType }}]]></MsgType>
+    {% block data %}{% endblock %}
+</xml>

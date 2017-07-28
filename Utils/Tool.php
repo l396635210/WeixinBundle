@@ -10,7 +10,9 @@ namespace Liz\WeiXinBundle\Utils;
 
 
 use Doctrine\Common\Cache\FilesystemCache;
+use Symfony\Component\DependencyInjection\Exception\ParameterNotFoundException;
 use Symfony\Component\HttpKernel\KernelInterface;
+use Symfony\Component\Serializer\Encoder\XmlEncoder;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class Tool
@@ -84,4 +86,18 @@ class Tool
         }
     }
 
+    public static function serialize($format, array $data){
+        $formats = ["arr","array", "xml", "json", "object", "obj"];
+        if(!in_array($format, $formats)){
+            throw new ParameterNotFoundException("format should with [".implode(",",$formats)."]");
+        }
+        if($format=='xml'){
+            $xmlEncoder = new XmlEncoder();
+            $data = $xmlEncoder->encode($data, "xml");
+        }elseif($format=='json'||$format=='object'||$format=='obj'){
+            $isJson = $format=='json' ? true : false;
+            $data = \GuzzleHttp\json_encode($data, $isJson);
+        }
+        return $data;
+    }
 }

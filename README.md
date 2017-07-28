@@ -48,11 +48,11 @@ $this->get('liz_wx.service.menu')->create([
                     ->setUrl("http://buk4af.natappfree.cc")
                     ->setName("按钮1-1")
             )
-            ->toArray(),
+            ->serialize(),
         ButtonFactory::createClickButton(ClickButton::TYPE_PIC_SYSPHOTO)//设置type如果使用类常量不要忘记use
             ->setKey("V1001_GOOD")
             ->setName("按钮2")
-            ->toArray(),
+            ->serialize(),
     ]
 ]);
 ```    
@@ -66,4 +66,21 @@ $res = $this->get("liz_wx.service.menu")
 $res = $this->get("liz_wx.service.menu")
     ->delete();
 ```
-- 
+- 接收消息，判断消息类型，被动回复
+```php
+    $wxMessageService = $this->get("liz_wx.service.message");
+    $receiveMsg = $wxMessageService
+        ->receiveMsg();
+    if($receiveMsg instanceof EventMsg){
+        //事件推送
+    }else{
+        //普通消息
+    }
+    //被动回复消息
+    $replyMsg = $wxMessageService->replyMsg('text',[
+        'Content' => '你好',
+    ]);
+    dump($replyMsg);
+    return new Response($replyMsg);
+```
+下一步，完善回复模板

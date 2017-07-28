@@ -9,6 +9,7 @@
 namespace Liz\WeiXinBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Liz\WeiXinBundle\Utils\Tool;
 
 abstract class MenuButton
 {
@@ -118,7 +119,7 @@ abstract class MenuButton
         return $this;
     }
 
-    public function toArray(){
+    protected function toArray(){
         $menu = [
             "type" => $this->getType(),
             "name" => $this->getName(),
@@ -127,5 +128,13 @@ abstract class MenuButton
             $menu["sub_button"][] = $subButton->toArray();
         }
         return $menu;
+    }
+
+    /**
+     * @param string $format|string ["arr","array", "xml", "json", "object", "obj"]
+     * @return array|string|\Symfony\Component\Serializer\Encoder\scalar
+     */
+    public function serialize($format="arr"){
+        return Tool::serialize($format, $this->toArray());
     }
 }

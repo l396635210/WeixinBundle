@@ -82,4 +82,13 @@ class MiniprogramButton extends MenuButton
     {
         parent::__construct($type);
     }
+
+    protected function toArray()
+    {
+        $menu = parent::toArray();
+        $menu['url'] = $this->getUrl();
+        $menu['appid'] = $this->getAppid();
+        $menu['pagepath'] = $this->getPagepath();
+        return $menu;
+    }
 }

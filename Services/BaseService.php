@@ -100,7 +100,7 @@ class BaseService
         return md5("{$this->getAppID()}_{$this->getAppSecret()}");
     }
 
-    public function saveAccessToken($body){
+    protected function saveAccessToken($body){
         $this->getTool()->getCache()->save(
             $this->cacheAccessTokenKey(), $body['access_token'],
             $body["expires_in"] - 200
