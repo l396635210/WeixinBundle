@@ -33,6 +33,7 @@ class MessageService
                                 RequestStack $requestStack, TranslatorInterface $translator, \Twig_Environment $twig)
     {
         $this->base = $base;
+        $this->getBase()->validSignature();
         $this->tool = new Tool($translator, $kernel);
         $this->httpClient = new Client();
         $this->request = $requestStack->getCurrentRequest();

@@ -21,7 +21,6 @@ class MenuService
 {
     use Interaction;
 
-
     /**
      * @return Client
      */

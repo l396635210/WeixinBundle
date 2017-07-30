@@ -15,20 +15,21 @@ liz_wei_xin:
     $this->get("liz_wx.service.base")
                 ->start();
 ```
--[x] 获取access_token：       
+- [x] 获取access_token：       
 此操作会将access_token以file_system缓存存在%kernel.cache_dir%."/liz_wx"文件夹下，    
 保存时间7000秒，返回获取token
+添加command：php bin/console lizwx:actk:update 更新access_token
 ````php
     $token = $this->get('liz_wx.service.base')
             ->updateAccessToken();
 ````
--[x] 获取微信服务器ip
+- [x] 获取微信服务器ip
 ````php
     $ipList = $this->get('liz_wx.service.base')
                 ->fetchWeiXinServerIP();
 ````
 - 自定义菜单
--[x] 自定义菜单创建、修改 返回response body|array
+- [x] 自定义菜单创建、修改 返回response body|array
 ````php
 //button_arrays填写参照官方文档以数组格式传入
 //文档链接：https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1421141013
@@ -56,17 +57,17 @@ $this->get('liz_wx.service.menu')->create([
     ]
 ]);
 ```    
--[x] 自定义菜单查询 返回response body|array
+- [x] 自定义菜单查询 返回response body|array
 ```php
 $res = $this->get("liz_wx.service.menu")
     ->get();
 ````
--[x] 自定义菜单删除 返回response body|array
+- [x] 自定义菜单删除 返回response body|array
 ```php
 $res = $this->get("liz_wx.service.menu")
     ->delete();
 ```
-- 接收消息，判断消息类型，被动回复
+- [x] 接收消息，判断消息类型，被动回复
 ```php
     $wxMessageService = $this->get("liz_wx.service.message");
     $receiveMsg = $wxMessageService
@@ -83,4 +84,23 @@ $res = $this->get("liz_wx.service.menu")
     dump($replyMsg);
     return new Response($replyMsg);
 ```
-下一步，完善回复模板
+文本消息、图片消息、语音消息、视频消息、音乐消息都是上述格式    
+
+图文消息示例如下:
+```php
+    //被动回复图文消息
+    $replyMsg = $wxMessageService->replyMsg('news',[
+        [
+            'Title' => 'Title',
+            'Description' => 'Description',
+            'PicUrl' => 'http://photocdn.sohu.com/20151126/mp44520144_1448521145792_2.jpeg',
+            'Url' => 'http://www.sohu.com/a/44520144_180738',
+        ],
+        [
+            'Title' => 'Title',
+            'Description' => 'Description',
+            'PicUrl' => 'http://photocdn.sohu.com/20151126/mp44520144_1448521145792_2.jpeg',
+            'Url' => 'http://www.sohu.com/a/44520144_180738',
+        ]
+    ]);
+```

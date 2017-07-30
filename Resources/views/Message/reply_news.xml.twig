@@ -1,0 +1,13 @@
+{% extends '@LizWeiXin/reply_msg_layout.xml.twig' %}
+{% block data %}
+    <ArticleCount>{{ replyMessage.data|length }}</ArticleCount>
+    <Articles>
+    {% for item in replyMessage.data %}
+    <item>
+        {% for key,val in item %}
+            <{{ key }}><![CDATA[{{ val }}]]></{{ key }}>
+        {% endfor %}
+    </item>
+    {% endfor %}
+    </Articles>
+{% endblock %}

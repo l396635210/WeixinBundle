@@ -74,15 +74,24 @@ class BaseService
      */
     public function start(){
         $request = $this->getRequest();
+        if($this->validSignature()){
+            return  $request->query->get('echostr');
+        }
+        throw $this->interActionException("token valid fail, check config liz_wx: base: token value");
+    }
+
+    public function validSignature(){
+        $request = $this->getRequest();
         $timestamp = $request->query->get('timestamp');
         $nonce = $request->query->get('nonce');
         $array = [ $this->token, $timestamp, $nonce,];
         sort($array, SORT_STRING);
         $sign = sha1(implode("",$array));
+        $this->getTool()->dump($sign==$request->query->get('signature'));
         if($sign==$request->query->get('signature')){
-            return  $request->query->get('echostr');
+            return $sign==$request->query->get('signature');
         }
-        throw $this->interActionException("token valid fail, check config liz_wx: base: token value");
+        throw $this->interActionException("Signature valid failed");
     }
 
     public function updateAccessToken(){
