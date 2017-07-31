@@ -95,6 +95,11 @@ trait Interaction
         return self::$baseWeiXinApi."menu/delete?access_token={$this->getBase()->getAccessToken()}";
     }
 
+    protected function getUploadMediaAPI(){
+        return self::$baseWeiXinApi."uploadimg?access_token={$this->getBase()->getAccessToken()}";
+    }
+
+
     protected function requestAPICallBack(ResponseInterface $res, callable $callback){
         $body = \GuzzleHttp\json_decode($res->getBody()->getContents(),true);
         if(!isset($body["errcode"]) || $body["errcode"]==0){

@@ -23,8 +23,6 @@ class MessageService
 {
     use Interaction;
 
-    private $base;
-
     private $receiveMsg;
 
     private $twig;

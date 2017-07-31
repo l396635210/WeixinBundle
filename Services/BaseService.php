@@ -10,6 +10,7 @@ namespace Liz\WeiXinBundle\Services;
 
 
 use GuzzleHttp\Client;
+use Liz\WeiXinBundle\SDK\WXBizMsgCrypt;
 use Liz\WeiXinBundle\Traits\Interaction;
 use Liz\WeiXinBundle\Utils\Tool;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -25,15 +26,27 @@ class BaseService
     private $token;
 
     /**
-     * @var
+     * @var string
      */
     private $appID;
 
     /**
-     * @var
+     * @var string
      */
     private $appSecret;
 
+    /**
+     * @var WXBizMsgCrypt
+     */
+    private $wxMsgCrypt;
+
+    /**
+     * @return WXBizMsgCrypt
+     */
+    public function getWxMsgCrypt()
+    {
+        return $this->wxMsgCrypt;
+    }
 
     /**
      * @return mixed
@@ -61,6 +74,7 @@ class BaseService
         $this->tool = new Tool($translator, $kernel);
         $this->httpClient = new Client();
         $this->base = $this;
+        $this->wxMsgCrypt = new WXBizMsgCrypt($token, $appSecret, $appID);
     }
 
 
@@ -87,7 +101,6 @@ class BaseService
         $array = [ $this->token, $timestamp, $nonce,];
         sort($array, SORT_STRING);
         $sign = sha1(implode("",$array));
-        $this->getTool()->dump($sign==$request->query->get('signature'));
         if($sign==$request->query->get('signature')){
             return $sign==$request->query->get('signature');
         }
@@ -122,7 +135,11 @@ class BaseService
      * @return false|mixed
      */
     public function getAccessToken(){
-        return $this->getTool()->getCache()->fetch($this->cacheAccessTokenKey());
+        $cache = $this->getTool()->getCache();
+        if(!$cache->fetch($this->cacheAccessTokenKey())){
+            $this->updateAccessToken();
+        }
+        return $cache->fetch($this->cacheAccessTokenKey());
     }
 
     /**
