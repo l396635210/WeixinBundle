@@ -1,4 +1,9 @@
 SignatureDoesNotMatch: 签名不匹配
 Specified signature is not matched with our calculation.: 签名与阿里服务器计算不符，检查access_key和access_key_secret是否正确.
-MissingSendDate: 接口参数发送日期sendDate
+MissingSendDate: 接口参数缺少发送日期sendDate
 SendDate is mandatory for this action.: sendDate是此操作的必须参数。
+invalid meida size hint: invalid meida size hint(文件大小超限)
+token valid fail, check config liz_wx: token 验证失败，请检查liz_wx的配置是否正确
+Signature valid failed: 加密签名验证失败
+invalid media type: 无效媒体类型
+media data missing hint: media data missing hint(缺少媒体数据)

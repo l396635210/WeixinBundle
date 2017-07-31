@@ -107,4 +107,38 @@ $res = $this->get("liz_wx.service.menu")
 
 - [ ] 待完成客服消息
 
-- [x]
+- [x] 上传图片 return $body|array
+```php
+    $file = [
+        'name'     => 'media',
+        'contents' => fopen($this->get('kernel')->getRootDir()."/../web/uploads/Tulips.jpg", 'r'),
+        'filename' => 'Tulips.jpg'
+    ];
+    $res = $this->get("liz_wx.service.media")->uploadImg($file);
+    dump($res);
+```
+
+- [x] 新增临时素材 return $body|array
+```php
+    //鉴于微信api地址，函数起名为upload了....
+    $file = [
+        'name'     => 'media',
+        'contents' => fopen($this->get('kernel')->getRootDir()."/../web/uploads/Lighthouse-thumb.jpg", 'r'),
+        'filename' => 'Tulips.jpg'
+    ];
+    $res = $this->get("liz_wx.service.media")->upload($file, 'thumb');
+```
+
+- [x] 获取临时素材 @return array|mixed|string    
+   ```public function get($mediaId, $type=null){}```    
+   当$type为video时,返回json，其余返回stream数据流，并保存于    
+   ```yml
+        material:
+            local_dir: "%kernel.root_dir%/../web/uploads" 
+   ```
+   文件夹中，详情见文档:https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738726
+```php
+    $res = $this->get('liz_wx.service.media')
+        ->get("ZW45AoBACJ2ZUmloqAlEWB1dOMGwbgb3hvg45gxAElvHvEAMc8kDh0kg8wQy09qy", 'thumb');
+    dump($res);
+``` 

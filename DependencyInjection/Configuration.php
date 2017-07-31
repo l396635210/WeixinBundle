@@ -29,6 +29,12 @@ class Configuration implements ConfigurationInterface
                         ->scalarNode('app_secret')->defaultValue('app_secret')->cannotBeEmpty()->end()
                     ->end()
                 ->end()
+                ->arrayNode('material')
+                    ->addDefaultsIfNotSet()
+                    ->children()
+                        ->scalarNode('local_dir')->defaultNull()->cannotBeEmpty()->end()
+                    ->end()
+                ->end()
             ->end()
         ;
         // Here you should define the parameters that are allowed to

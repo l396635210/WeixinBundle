@@ -14,3 +14,7 @@ services:
     liz_wx.service.message:
         class: Liz\WeiXinBundle\Services\MessageService
         arguments: ['@liz_wx.service.base', '@kernel' , '@request_stack', '@translator', '@twig']
+
+    liz_wx.service.media:
+        class: Liz\WeiXinBundle\Services\MediaService
+        arguments: ['@liz_wx.service.base', '@kernel', '@request_stack', '@translator', 'local_dir']

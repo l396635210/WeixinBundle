@@ -1,9 +1,9 @@
 <?php
 /**
  * Created by PhpStorm.
- * User: lenovo
- * Date: 2017/7/31
- * Time: 11:43
+ * User: yu
+ * Date: 2017/8/1
+ * Time: 4:44
  */
 
 namespace Liz\WeiXinBundle\Services;
@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class UploadService
+class MaterialService
 {
     use Interaction;
 
@@ -26,5 +26,8 @@ class UploadService
         $this->base = $base;
         $this->tool = new Tool($translator, $kernel);
         $this->httpClient = new Client();
+        $this->request = $requestStack->getCurrentRequest();
     }
+
+
 }

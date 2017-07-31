@@ -31,5 +31,8 @@ class LizWeiXinExtension extends Extension
             ->replaceArgument(2, $config['base']['app_secret'])
         ;
 
+        $def = $container->getDefinition('liz_wx.service.media');
+        $def->replaceArgument(4, $config['material']['local_dir'])
+        ;
     }
 }

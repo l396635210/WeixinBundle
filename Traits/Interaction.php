@@ -9,6 +9,7 @@
 namespace Liz\WeiXinBundle\Traits;
 
 use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\Request;
 use Liz\WeiXinBundle\Services\BaseService;
 use Liz\WeiXinBundle\Utils\Tool;
 use Psr\Http\Message\ResponseInterface;
@@ -95,20 +96,71 @@ trait Interaction
         return self::$baseWeiXinApi."menu/delete?access_token={$this->getBase()->getAccessToken()}";
     }
 
-    protected function getUploadMediaAPI(){
-        return self::$baseWeiXinApi."uploadimg?access_token={$this->getBase()->getAccessToken()}";
+    protected function getMediaUploadImgAPI(){
+        return self::$baseWeiXinApi."media/uploadimg?access_token={$this->getBase()->getAccessToken()}";
     }
 
+    protected function getMediaUploadAPI($type="image"){
+        return self::$baseWeiXinApi."media/upload?access_token={$this->getBase()->getAccessToken()}&type={$type}";
+    }
+
+    protected function getMediaGetAPI($mediaID){
+        return self::$baseWeiXinApi."media/get?access_token={$this->getBase()->getAccessToken()}&media_id={$mediaID}";
+    }
+
+    protected function getMediaUploadNewsAPI(){
+        return self::$baseWeiXinApi."media/uploadnews?access_token={$this->getBase()->getAccessToken()}";
+    }
 
     protected function requestAPICallBack(ResponseInterface $res, callable $callback){
         $body = \GuzzleHttp\json_decode($res->getBody()->getContents(),true);
         if(!isset($body["errcode"]) || $body["errcode"]==0){
             return call_user_func($callback, $body);
         }
-        throw $this->interActionException($body["errmsg"]);
+        throw $this->interActionException($body);
     }
 
-    protected function interActionException($e){
-        return new ValidatorException($this->getTool()->trans($e));
+    /**
+     * @param $url
+     * @param array $data
+     * @param callable $callback
+     * @return mixed|array
+     */
+    protected function httpJsonPost($url, array $data, callable $callback){
+        $request = new Request("POST", $url, [
+            'Content-type' => 'application/json; charset=utf-8',
+            'Accept' => 'application/json',
+        ], \GuzzleHttp\json_encode($data, JSON_UNESCAPED_UNICODE));
+        $res = $this->getHttpClient()
+            ->send($request);
+        return $this->requestAPICallBack($res, $callback);
     }
+
+    /**
+     * @param $url
+     * @param callable $callback
+     * @return mixed|array
+     */
+    protected function httpGet($url, callable $callback){
+        $res = $this->getHttpClient()->request("GET", $url);
+        return $this->requestAPICallBack($res, $callback);
+    }
+
+    /**
+     * @param $e
+     * @return ValidatorException
+     */
+    protected function interActionException($e){
+        if(is_array($e)){
+            $errorCode = $e['errcode'];
+            list($errorMsg, $errorRequest) = explode(":", $e["errmsg"]);
+            $errorShow = "error_code:{$errorCode}\n"."request_id:{$errorRequest}\n".
+                "error_message:{$this->getTool()->trans($errorMsg)}";
+        }else{
+            $errorShow = $this->getTool()->trans($e);
+        }
+        return new ValidatorException($errorShow);
+    }
+
+
 }
