@@ -8,6 +8,8 @@ liz_wei_xin:
         token: your_token
         app_id: your_app_id
         app_secret: your_app_secret
+    material:
+        local_dir: your_material_local_dir 
 ````
 - Base    
 - [x] 接口接入验证
@@ -18,7 +20,8 @@ liz_wei_xin:
 - [x] 获取access_token：       
 此操作会将access_token以file_system缓存存在%kernel.cache_dir%."/liz_wx"文件夹下，    
 保存时间7000秒，返回获取token
-添加command：php bin/console lizwx:actk:update 更新access_token
+添加command：php bin/console lizwx:actk:update 更新access_token    
+2017年8月1日更新： liz_wx.service.base添加getAccessToken()如果本地actk过期更新并返回
 ````php
     $token = $this->get('liz_wx.service.base')
             ->updateAccessToken();
@@ -107,7 +110,7 @@ $res = $this->get("liz_wx.service.menu")
 
 - [ ] 待完成客服消息
 
-- [x] 上传图片 return $body|array
+- [x] 上传图片|上传图文消息内的图片获取URL return $body|array，返回的url就是上传图片的URL，可放置图文消息中使用。
 ```php
     $file = [
         'name'     => 'media',
@@ -131,7 +134,7 @@ $res = $this->get("liz_wx.service.menu")
 
 - [x] 获取临时素材 @return array|mixed|string    
    ```public function get($mediaId, $type=null){}```    
-   当$type为video时,返回json，其余返回stream数据流，并保存于    
+   当$type为video时,返回json，其余保存本地路径，并将返回media数据流保存于    
    ```yml
         material:
             local_dir: "%kernel.root_dir%/../web/uploads" 
@@ -142,3 +145,30 @@ $res = $this->get("liz_wx.service.menu")
         ->get("ZW45AoBACJ2ZUmloqAlEWB1dOMGwbgb3hvg45gxAElvHvEAMc8kDh0kg8wQy09qy", 'thumb');
     dump($res);
 ``` 
+- [x] 新增除图文外其他永久素材 return mixed|array $body，新增永久视频素材需要传入$description参数
+```php
+    $file = [
+        'name'     => 'media',
+        'contents' => fopen($this->get('kernel')->getRootDir()."/../web/uploads/girl.jpg", 'r'),
+        'filename' => 'girl.jpg'
+    ];
+    $res = $this->get('liz_wx.service.material')->addMaterial($file, 'thumb');
+```
+
+- [x] 新增永久图文素材 return array|mixed $body
+```php
+    $res = $this->get('liz_wx.service.material')
+        ->addNews([
+           [
+                "title"=> "title",
+                "thumb_media_id" => "dEWqOQKN8q3XPHBZuyEh0TtiEoOuQ3oTGo7tEmWKIBI",
+                "author" => "李征",
+                "digest" => "这是啥三十岁四十岁时",
+                "show_cover_pic" => 1,
+                "content" => "这是啥三十岁四十岁时这是啥三十岁四十岁时这是啥三十岁四十岁时这是啥三十岁四十岁时这是啥三十岁四十岁时这是啥三十岁四十岁时这是啥三十岁四十岁时",
+                "content_source_url"=> "http://www.baidu.com",
+            ],
+        ]);
+    dump($res);
+```
+- [] 下一个：获取永久素材

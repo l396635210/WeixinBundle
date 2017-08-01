@@ -104,8 +104,16 @@ trait Interaction
         return self::$baseWeiXinApi."media/upload?access_token={$this->getBase()->getAccessToken()}&type={$type}";
     }
 
+    protected function getMaterialAddMaterialAPI($type="image"){
+        return self::$baseWeiXinApi."material/add_material?access_token={$this->getBase()->getAccessToken()}&type={$type}";
+    }
+
     protected function getMediaGetAPI($mediaID){
         return self::$baseWeiXinApi."media/get?access_token={$this->getBase()->getAccessToken()}&media_id={$mediaID}";
+    }
+
+    protected function getMaterialAddNews(){
+        return self::$baseWeiXinApi."material/add_news?access_token={$this->getBase()->getAccessToken()}";
     }
 
     protected function getMediaUploadNewsAPI(){

@@ -7,3 +7,5 @@ token valid fail, check config liz_wx: token 验证失败，请检查liz_wx的�
 Signature valid failed: 加密签名验证失败
 invalid media type: 无效媒体类型
 media data missing hint: media data missing hint(缺少媒体数据)
+invalid media_id hint: invalid media_id hint(无效的media_id)
+empty news data hint: empty news data hint(空的图文数据,请先确认格式是否正确)

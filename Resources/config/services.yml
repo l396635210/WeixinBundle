@@ -18,3 +18,7 @@ services:
     liz_wx.service.media:
         class: Liz\WeiXinBundle\Services\MediaService
         arguments: ['@liz_wx.service.base', '@kernel', '@request_stack', '@translator', 'local_dir']
+
+    liz_wx.service.material:
+            class: Liz\WeiXinBundle\Services\MaterialService
+            arguments: ['@liz_wx.service.base', '@kernel', '@request_stack', '@translator']

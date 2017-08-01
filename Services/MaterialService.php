@@ -29,5 +29,36 @@ class MaterialService
         $this->request = $requestStack->getCurrentRequest();
     }
 
+    /**
+     * @param array $articles
+     * @return array|mixed
+     */
+    public function addNews(array $articles){
+        return $this->httpJsonPost($this->getMaterialAddNews(),[
+            "articles" => $articles,
+        ], function ($body){
+            return $body;
+        });
+    }
+
+    /**
+     * @param array $file
+     * @param $type
+     * @param null $description
+     * @return mixed|array
+     */
+    public function addMaterial(array $file, $type, $description=null){
+        $res = $this->getHttpClient()->request("POST",
+            $this->getMaterialAddMaterialAPI($type), [
+                'multipart' => [
+                    $file
+                ],[
+                    'description' => $description,
+                ]
+            ]);
+        return $this->requestAPICallBack($res, function ($body){
+            return $body;
+        });
+    }
 
 }
