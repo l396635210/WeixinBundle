@@ -79,13 +79,6 @@ class Tool
         return $this->translator->trans($message, $params, 'LizWeiXinBundle');
     }
 
-
-    public function dump($var){
-        if($this->getKernel()->getEnvironment()!='prod'){
-            dump($var);
-        }
-    }
-
     public static function serialize($format, array $data){
         $formats = ["arr","array", "xml", "json", "object", "obj"];
         if(!in_array($format, $formats)){
@@ -100,4 +93,25 @@ class Tool
         }
         return $data;
     }
+
+    /**
+     * Encode array to utf8 recursively
+     * @param string|array $dat
+     * @return array|string
+     */
+    public function utf8Encode($dat)
+    {
+        if (is_string($dat)){
+            return utf8_encode($dat);
+        }
+        if (!is_array($dat)){
+            return $dat;
+        }
+        $ret = array();
+        foreach ($dat as $i => $d){
+            $ret[$i] = $this->array_utf8_encode($d);
+        }
+        return $ret;
+    }
+
 }

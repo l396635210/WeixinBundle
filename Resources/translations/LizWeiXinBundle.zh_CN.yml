@@ -9,3 +9,4 @@ invalid media type: 无效媒体类型
 media data missing hint: media data missing hint(缺少媒体数据)
 invalid media_id hint: invalid media_id hint(无效的media_id)
 empty news data hint: empty news data hint(空的图文数据,请先确认格式是否正确)
+reach max api daily quota limit hint: reach max api daily quota limit hint(接口访问次数到达上限，当日无法继续调用)

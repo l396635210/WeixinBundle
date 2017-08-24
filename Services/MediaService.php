@@ -104,8 +104,11 @@ class MediaService
         }
         $filesystem = new Filesystem();
         $filename = substr($res->getHeader("Content-disposition")[0], strlen('attachment; filename="'), -1);
+        $fileExplode = explode('.', $filename);
+        $ext = isset($fileExplode[1]) ? ".".$fileExplode[1] : "";
+        $filename = $mediaId.$ext;
         $filesystem->dumpFile($this->getLocalDir().'/'.$filename, $res->getBody()->getContents());
-        return $this->getLocalDir().'/'.$filename;
+        return $filename;
     }
 
     /**

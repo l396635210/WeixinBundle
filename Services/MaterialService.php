@@ -30,6 +30,7 @@ class MaterialService
     }
 
     /**
+     * 新增永久图文素材
      * @param array $articles
      * @return array|mixed
      */
@@ -42,12 +43,13 @@ class MaterialService
     }
 
     /**
-     * @param array $file
-     * @param $type
-     * @param null $description
+     * 新增除图文外其他永久素材, 新增永久视频素材需要传入$description参数
+     * @param array $file 文件信息
+     * @param string $type 素材类型：image，voice，video，thumb
+     * @param array|null $description
      * @return mixed|array
      */
-    public function addMaterial(array $file, $type, $description=null){
+    public function addMaterial(array $file, $type, array $description=null){
         $res = $this->getHttpClient()->request("POST",
             $this->getMaterialAddMaterialAPI($type), [
                 'multipart' => [
@@ -61,4 +63,17 @@ class MaterialService
         });
     }
 
+    /**
+     * 获取永久素材
+     * @param string $mediaId
+     * @return array|mixed
+     */
+    public function get($mediaId){
+        return $this->httpJsonPost($this->getGetMaterialAPI(),
+            ['media_id'=>$mediaId,],
+            function ($body){
+            dump($body);
+                return $body;
+        });
+    }
 }

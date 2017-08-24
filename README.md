@@ -1,6 +1,20 @@
 微信接口相关Bundle
 ====================================
-Bundle Config
+## Use
+```php
+    //app/AppKernel.php
+   public function registerBundles()
+    {
+        $bundles = [
+            ...
+            new AppBundle\AppBundle(),
+            new Liz\WeiXinBundle\LizWeiXinBundle(),
+            ...
+        ];
+        ...
+    }
+````
+Config
 ----------------
 ````yml
 liz_wei_xin:

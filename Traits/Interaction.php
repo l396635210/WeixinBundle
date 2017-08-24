@@ -78,8 +78,7 @@ trait Interaction
     {
         return $this->tool;
     }
-
-
+/********************************获取api地址start************************************/
     protected function getWeiXinServerIpAPI(){
         return self::$baseWeiXinApi."getcallbackip?access_token={$this->getBase()->getAccessToken()}";
     }
@@ -120,8 +119,17 @@ trait Interaction
         return self::$baseWeiXinApi."media/uploadnews?access_token={$this->getBase()->getAccessToken()}";
     }
 
+    protected function getGetMaterialAPI(){
+        return self::$baseWeiXinApi."material/get_material?access_token={$this->getBase()->getAccessToken()}";
+    }
+/********************************获取api地址end************************************/
+
     protected function requestAPICallBack(ResponseInterface $res, callable $callback){
-        $body = \GuzzleHttp\json_decode($res->getBody()->getContents(),true);
+        $body = $res->getBody()->getContents();
+        if(json_decode($body)){
+            $body = $this->getTool()->utf8Encode($body);
+            $body = \GuzzleHttp\json_decode($body,true);
+        }
         if(!isset($body["errcode"]) || $body["errcode"]==0){
             return call_user_func($callback, $body);
         }
