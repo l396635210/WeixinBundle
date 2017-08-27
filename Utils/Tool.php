@@ -109,7 +109,7 @@ class Tool
         }
         $ret = array();
         foreach ($dat as $i => $d){
-            $ret[$i] = $this->array_utf8_encode($d);
+            $ret[$i] = $this->utf8Encode($d);
         }
         return $ret;
     }

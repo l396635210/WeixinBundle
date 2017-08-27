@@ -12,6 +12,7 @@ namespace Liz\WeiXinBundle\Services;
 use GuzzleHttp\Client;
 use Liz\WeiXinBundle\Traits\Interaction;
 use Liz\WeiXinBundle\Utils\Tool;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -50,11 +51,11 @@ class MaterialService
      * @return mixed|array
      */
     public function addMaterial(array $file, $type, array $description=null){
+        dump($file);
         $res = $this->getHttpClient()->request("POST",
             $this->getMaterialAddMaterialAPI($type), [
                 'multipart' => [
-                    $file
-                ],[
+                    'media' => $file,
                     'description' => $description,
                 ]
             ]);
@@ -66,13 +67,12 @@ class MaterialService
     /**
      * 获取永久素材
      * @param string $mediaId
-     * @return array|mixed
+     * @return resource|array
      */
     public function get($mediaId){
         return $this->httpJsonPost($this->getGetMaterialAPI(),
             ['media_id'=>$mediaId,],
             function ($body){
-            dump($body);
                 return $body;
         });
     }

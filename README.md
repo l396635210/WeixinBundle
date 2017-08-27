@@ -91,8 +91,16 @@ $res = $this->get("liz_wx.service.menu")
         ->receiveMsg();
     if($receiveMsg instanceof EventMsg){
         //事件推送
+        $receiveMsg->isSubscribe();//事件类型 subscribe
+        $receiveMsg->isUnSubscribe();//事件类型 unsubscribe
+        $receiveMsg->isClick();// 事件类型 CLICK
+        $receiveMsg->isScan(); //事件类型，SCAN
+        $receiveMsg->is....等等
     }else{
         //普通消息
+        $receiveMsg->isText(); //文本类型
+        $receiveMsg->isVoice(); //语音类型
+        $receiveMsg->isImage(); //图片
     }
     //被动回复消息
     $replyMsg = $wxMessageService->replyMsg('text',[
@@ -146,14 +154,9 @@ $res = $this->get("liz_wx.service.menu")
     $res = $this->get("liz_wx.service.media")->upload($file, 'thumb');
 ```
 
-- [x] 获取临时素材 @return array|mixed|string    
-   ```public function get($mediaId, $type=null){}```    
-   当$type为video时,返回json，其余保存本地路径，并将返回media数据流保存于    
-   ```yml
-        material:
-            local_dir: "%kernel.root_dir%/../web/uploads" 
-   ```
-   文件夹中，详情见文档:https://mp.weixin.qq.com/wiki?t=resource/res_main&id=mp1444738726
+- [x] 获取临时素材 @return array|resource    
+   ```public function get($mediaId){}```    
+   当mediaID为video类型时,返回数组[video_url=>'url'],其他格式，返回resource
 ```php
     $res = $this->get('liz_wx.service.media')
         ->get("ZW45AoBACJ2ZUmloqAlEWB1dOMGwbgb3hvg45gxAElvHvEAMc8kDh0kg8wQy09qy", 'thumb');
@@ -185,4 +188,10 @@ $res = $this->get("liz_wx.service.menu")
         ]);
     dump($res);
 ```
-- [] 下一个：获取永久素材
+- [] 获取非图文永久素材: 当mediaID为video时，返回数组，其余返回resource
+```php
+    $mediaId = 'dEWqOQKN8q3XPHBZuyEh0eiGYZimMOB2j198_VkWqPc';
+    $res = $this->get('liz_wx.service.material')->get($mediaId);
+    $fs = new Filesystem();
+    $fs->dumpFile($mediaId.'.jpg', $res);
+```

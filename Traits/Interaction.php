@@ -126,9 +126,9 @@ trait Interaction
 
     protected function requestAPICallBack(ResponseInterface $res, callable $callback){
         $body = $res->getBody()->getContents();
-        if(json_decode($body)){
-            $body = $this->getTool()->utf8Encode($body);
-            $body = \GuzzleHttp\json_decode($body,true);
+        $utf8Body = $this->getTool()->utf8Encode($body);
+        if(json_decode($utf8Body)){
+            $body = \GuzzleHttp\json_decode($utf8Body,true);
         }
         if(!isset($body["errcode"]) || $body["errcode"]==0){
             return call_user_func($callback, $body);

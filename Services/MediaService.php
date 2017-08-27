@@ -89,26 +89,14 @@ class MediaService
     /**
      * @param $mediaId
      * @param null $type
-     * @return array|mixed|string
+     * @return array|resource
      */
-    public function get($mediaId, $type=null){
-        $url = $this->getMediaGetAPI($mediaId);
-        if($type=='video'){
-            return $this->httpGet($url, function ($body){
+    public function get($mediaId){
+        return $this->httpJsonPost($this->getMediaGetAPI($mediaId),
+            ['media_id'=>$mediaId,],
+            function ($body){
                 return $body;
-            });
-        }
-        $res = $this->getHttpClient()->request('Get', $url);
-        if(!$res->getStatusCode()==200){
-            throw $this->interActionException("request error");
-        }
-        $filesystem = new Filesystem();
-        $filename = substr($res->getHeader("Content-disposition")[0], strlen('attachment; filename="'), -1);
-        $fileExplode = explode('.', $filename);
-        $ext = isset($fileExplode[1]) ? ".".$fileExplode[1] : "";
-        $filename = $mediaId.$ext;
-        $filesystem->dumpFile($this->getLocalDir().'/'.$filename, $res->getBody()->getContents());
-        return $filename;
+        });
     }
 
     /**
