@@ -51,14 +51,13 @@ class MaterialService
      * @return mixed|array
      */
     public function addMaterial(array $file, $type, array $description=null){
-        dump($file);
         $res = $this->getHttpClient()->request("POST",
             $this->getMaterialAddMaterialAPI($type), [
-                'multipart' => [
-                    'media' => $file,
-                    'description' => $description,
-                ]
-            ]);
+            'multipart' => [
+                $file,
+            ],
+            ['description' => \GuzzleHttp\json_encode($description)],
+        ]);
         return $this->requestAPICallBack($res, function ($body){
             return $body;
         });
@@ -71,6 +70,19 @@ class MaterialService
      */
     public function get($mediaId){
         return $this->httpJsonPost($this->getGetMaterialAPI(),
+            ['media_id'=>$mediaId,],
+            function ($body){
+                return $body;
+        });
+    }
+
+    /**
+     * 删除永久素材
+     * @param $mediaId
+     * @return array|mixed
+     */
+    public function delMaterial($mediaId){
+        return $this->httpJsonPost($this->getDelMaterialAPI(),
             ['media_id'=>$mediaId,],
             function ($body){
                 return $body;

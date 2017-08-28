@@ -100,14 +100,16 @@ class MediaService
     }
 
     /**
+     * 上传临时图文素材
      * @param array $data
      * @return mixed
      */
     public function uploadNews(array $data){
         return $this->httpJsonPost($this->getMediaUploadNewsAPI(),
-            $data,
+            ["articles" => $data,],
             function ($body){
                 return $body;
         });
     }
+
 }

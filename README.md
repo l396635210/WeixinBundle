@@ -154,6 +154,23 @@ $res = $this->get("liz_wx.service.menu")
     $res = $this->get("liz_wx.service.media")->upload($file, 'thumb');
 ```
 
+- [x] 新增临时图文素材
+```php
+    $res = $this->get('liz_wx.service.media')
+        ->uploadNews([
+            [
+                "title"=> "title",
+                "thumb_media_id" => "SKBIPd9Y48KAjHSk7clpjnaaokbO7Lz9qnff_wpEQ6wfLNMOsAfXiXoryqX48K4J",
+                "author" => "李征",
+                "digest" => "这是啥三十岁四十岁时",
+                "show_cover_pic" => 1,
+                "content" => "这是啥三十岁四十岁时这是啥三十岁四十岁时这是啥三十岁四十岁时这是啥三十岁四十岁时这是啥三十岁四十岁时这是啥三十岁四十岁时这是啥三十岁四十岁时",
+                "content_source_url"=> "http://www.baidu.com",
+            ],
+        ]);
+    dump($res);
+```
+
 - [x] 获取临时素材 @return array|resource    
    ```public function get($mediaId){}```    
    当mediaID为video类型时,返回数组[video_url=>'url'],其他格式，返回resource
@@ -162,7 +179,8 @@ $res = $this->get("liz_wx.service.menu")
         ->get("ZW45AoBACJ2ZUmloqAlEWB1dOMGwbgb3hvg45gxAElvHvEAMc8kDh0kg8wQy09qy", 'thumb');
     dump($res);
 ``` 
-- [x] 新增除图文外其他永久素材 return mixed|array $body，新增永久视频素材需要传入$description参数
+- [x] 新增除图文外其他永久素材 return mixed|array $body，
+新增永久视频素材需要传入$description参数(image、thumb类型上传成功，video类型，测试号上传失败，voice待测试)
 ```php
     $file = [
         'name'     => 'media',
@@ -188,10 +206,19 @@ $res = $this->get("liz_wx.service.menu")
         ]);
     dump($res);
 ```
-- [] 获取非图文永久素材: 当mediaID为video时，返回数组，其余返回resource
+- [x] 获取非图文永久素材: 当mediaID为video时，返回数组，其余返回resource
 ```php
     $mediaId = 'dEWqOQKN8q3XPHBZuyEh0eiGYZimMOB2j198_VkWqPc';
-    $res = $this->get('liz_wx.service.material')->get($mediaId);
+    $res = $this->get('liz_wx.service.material')
+        ->get($mediaId);
     $fs = new Filesystem();
     $fs->dumpFile($mediaId.'.jpg', $res);
+```
+
+- [x] 删除永久素材
+```php
+    $mediaId = 'dEWqOQKN8q3XPHBZuyEh0eiGYZimMOB2j198_VkWqPc';
+    $res = $this->get('liz_wx.service.material')
+        ->delMaterial($mediaId);
+    dump($res);
 ```

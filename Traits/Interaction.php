@@ -115,6 +115,10 @@ trait Interaction
         return self::$baseWeiXinApi."material/add_news?access_token={$this->getBase()->getAccessToken()}";
     }
 
+    protected function getMaterialUpdateNews(){
+        return self::$baseWeiXinApi."material/update_news?access_token={$this->getBase()->getAccessToken()}";
+    }
+
     protected function getMediaUploadNewsAPI(){
         return self::$baseWeiXinApi."media/uploadnews?access_token={$this->getBase()->getAccessToken()}";
     }
@@ -122,8 +126,17 @@ trait Interaction
     protected function getGetMaterialAPI(){
         return self::$baseWeiXinApi."material/get_material?access_token={$this->getBase()->getAccessToken()}";
     }
-/********************************获取api地址end************************************/
 
+    protected function getDelMaterialAPI(){
+        return self::$baseWeiXinApi."material/del_material?access_token={$this->getBase()->getAccessToken()}";
+    }
+
+/********************************获取api地址end************************************/
+    /**
+     * @param ResponseInterface $res
+     * @param callable $callback
+     * @return array|mixed
+     */
     protected function requestAPICallBack(ResponseInterface $res, callable $callback){
         $body = $res->getBody()->getContents();
         $utf8Body = $this->getTool()->utf8Encode($body);
