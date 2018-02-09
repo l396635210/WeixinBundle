@@ -22,3 +22,7 @@ services:
     liz_wx.service.material:
             class: Liz\WeiXinBundle\Services\MaterialService
             arguments: ['@liz_wx.service.base', '@kernel', '@request_stack', '@translator']
+
+    liz_wx.service.short_url:
+            class: Liz\WeiXinBundle\Services\ShortUrlService
+            arguments: ['@liz_wx.service.base', '@kernel', '@request_stack', '@translator']

@@ -222,3 +222,17 @@ $res = $this->get("liz_wx.service.menu")
         ->delMaterial($mediaId);
     dump($res);
 ```
+
+- [x] 短地址生成
+```php
+    $longUrl = "https://baidu.com";
+    $res = $this->get('liz_wx.service.short_url')->trans($longUrl);
+    dump($res);
+```
+
+- [x] 地址有效性验证
+```php
+    $url = "https://w.url.cn/s/AYru4Vj";
+    $verify = $this->get('liz_wx.service.short_url')->verify($url);
+    dump($verify);
+```

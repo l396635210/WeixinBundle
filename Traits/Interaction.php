@@ -131,6 +131,10 @@ trait Interaction
         return self::$baseWeiXinApi."material/del_material?access_token={$this->getBase()->getAccessToken()}";
     }
 
+    protected function getShortUrlAPI(){
+        return self::$baseWeiXinApi."shorturl?access_token={$this->getBase()->getAccessToken()}";
+    }
+
 /********************************获取api地址end************************************/
     /**
      * @param ResponseInterface $res
