@@ -28,8 +28,9 @@ liz_wei_xin:
 - Base    
 - [x] 接口接入验证
 ```php
-    $this->get("liz_wx.service.base")
+    $res = $this->get("liz_wx.service.base")
                 ->start();
+    echo $res; die;                
 ```
 - [x] 获取access_token：       
 此操作会将access_token以file_system缓存存在%kernel.cache_dir%."/liz_wx"文件夹下，    
