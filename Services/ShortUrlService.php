@@ -50,17 +50,19 @@ class ShortUrlService
 
     /**
      * @param $url
+     * @param $guzzleOptions
      * @return bool
      */
-    public function verify($url){
+    public function verify($url, $guzzleOptions=[]){
 
         if(!$this->isWUrl($url)){
             $data = $this->trans($url);
             $url = $data["short_url"];
         }
+        $response = $this->httpClient->get($url, $guzzleOptions);
 
-        $response = $this->httpClient->get($url);
         $contents = $response->getBody()->getContents();
-        return !strstr(strtolower($contents), "weixin110");
+
+        return !strstr(strtolower($contents), "weixin110") && !strstr(strtolower($contents), "wx110");
     }
 }
